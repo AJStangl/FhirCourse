@@ -25,6 +25,10 @@ namespace FhirCourse.Services
                         ValueElement = new FhirString("Alfred.Stangl")
                     }
                 },
+                Text = new Narrative
+                {
+                    Status = Narrative.NarrativeStatus.Generated
+                },
                 Name = new List<HumanName>
                 {
                     new HumanName
