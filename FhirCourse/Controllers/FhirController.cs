@@ -1,4 +1,5 @@
-﻿using FhirCourse.Extensions;
+﻿using System;
+using FhirCourse.Extensions;
 using FhirCourse.Services;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
@@ -39,6 +40,15 @@ namespace FhirCourse.Controllers
         {
             var patient = _fhirClient.Update(_fhirServices.CreatePatient());
             return Ok(patient.ToJson());
+        }
+
+        [HttpGet]
+        [Route("[Action]")]
+        public ActionResult<string> MakeTransaction([FromHeader] int minutes = 0)
+        {
+            FhirDateTime fhirDateTime = new FhirDateTime(DateTimeOffset.Now.AddMinutes(minutes));
+            Bundle bundle = _fhirServices.CreateTransaction();
+            return bundle.ToXml();
         }
     }
 }

@@ -5,5 +5,6 @@ namespace FhirCourse.Services
     public interface IFhirServices
     {
         Patient CreatePatient();
+        Bundle CreateTransaction();
     }
 }
