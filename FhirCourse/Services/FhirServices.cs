@@ -178,7 +178,7 @@ namespace FhirCourse.Services
                     new Identifier
                     {
                         SystemElement = new FhirUri("www.nationalorgidentifier.gov/ids"),
-                        ValueElement = new FhirString($"UWEARME|{PatientId}")
+                        ValueElement = new FhirString($"UWEARME_{PatientId}")
                     }
                 },
                 NameElement = new FhirString("UWEARME"),
