@@ -13,10 +13,12 @@ namespace FhirCourse.Controllers
     {
         private readonly IFhirServices _fhirServices;
         private readonly IFhirClient _fhirClient;
+        private readonly IClient _client;
 
-        public FhirController(IFhirServices fhirServices)
+        public FhirController(IFhirServices fhirServices, IClient client)
         {
             _fhirServices = fhirServices;
+            _client = client;
             _fhirClient =  new FhirClient("http://fhir.hl7fundamentals.org/r4/");
         }
 
@@ -49,6 +51,13 @@ namespace FhirCourse.Controllers
             FhirDateTime fhirDateTime = new FhirDateTime(DateTimeOffset.Now.AddMinutes(minutes));
             Bundle bundle = _fhirServices.CreateTransaction();
             return bundle.ToXml();
+        }
+        [HttpGet]
+        [Route("[Action]")]
+        public ActionResult<string> GetPsPatient()
+        {
+            _client.GetPatient();
+            return "it worked";
         }
     }
 }

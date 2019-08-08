@@ -21,6 +21,8 @@ namespace FhirCourse
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
             services.AddSingleton<IFhirServices, FhirServices>();
+            services.AddTransient<IClient, Client>();
+            services.AddTransient<IMsalAuthenticator, MsalAuthenticationHandler>();
         }
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
