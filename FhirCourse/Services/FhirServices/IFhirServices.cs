@@ -1,6 +1,6 @@
 using Hl7.Fhir.Model;
 
-namespace FhirCourse.Services
+namespace FhirCourse.Services.FhirServices
 {
     public interface IFhirServices
     {

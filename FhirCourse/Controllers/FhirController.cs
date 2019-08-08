@@ -1,6 +1,7 @@
 ﻿using System;
 using FhirCourse.Extensions;
 using FhirCourse.Services;
+using FhirCourse.Services.FhirServices;
 using Hl7.Fhir.Model;
 using Hl7.Fhir.Rest;
 using Microsoft.AspNetCore.Mvc;

@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 
-namespace FhirCourse.Services
+namespace FhirCourse.Services.FhirServices
 {
     public class FhirServices : IFhirServices
     {

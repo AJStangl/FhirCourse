@@ -1,4 +1,6 @@
 ﻿using FhirCourse.Services;
+using FhirCourse.Services.FhirServices;
+using FhirCourse.Services.MSAuthenticationService;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
