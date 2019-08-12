@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.Identity.Client;
 
 namespace FhirCourse.Services.MSAuthenticationService
@@ -10,46 +10,46 @@ namespace FhirCourse.Services.MSAuthenticationService
     public class MsalAuthenticationHandler : IMsalAuthenticator
     {
         private readonly IConfidentialClientApplication _confidentialClientApplication;
-        private readonly string[] _scopes;
+        private readonly AzureAd _azureAd;
 
-        public MsalAuthenticationHandler(IConfiguration config)
+        public MsalAuthenticationHandler(IOptions<AzureAd> azureAd)
         {
-            _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(config["AzureAd:ClientId"])
-                .WithClientSecret(config["QuerySecret"])
-                .WithAuthority(AzureCloudInstance.AzurePublic, config["AzureAd:TenantId"])
+            _azureAd = azureAd.Value;
+            _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(_azureAd.ClientId)
+                .WithClientSecret(_azureAd.ClientSecret)
+                .WithAuthority(AzureCloudInstance.AzurePublic, _azureAd.TenantId)
                 .Build();
-            _scopes = config["AzureFhirScopes"].Split(',');
         }
 
         public async Task<MsalNetAuthResult> GetTokenAsync()
         {
             IEnumerable<IAccount> accounts = await _confidentialClientApplication.GetAccountsAsync();
-            MsalNetAuthResult authRes = new MsalNetAuthResult();
+            MsalNetAuthResult msalNetAuthResult = new MsalNetAuthResult();
 
             try
             {
-                authRes.Auth = await _confidentialClientApplication
-                    .AcquireTokenSilent(_scopes, accounts.FirstOrDefault())
+                msalNetAuthResult.Auth = await _confidentialClientApplication
+                    .AcquireTokenSilent(_azureAd.Scopes, accounts.FirstOrDefault())
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException)
             {
                 try
                 {
-                    authRes.Auth = await _confidentialClientApplication.AcquireTokenForClient(_scopes)
+                    msalNetAuthResult.Auth = await _confidentialClientApplication.AcquireTokenForClient(_azureAd.Scopes)
                         .ExecuteAsync();
                 }
                 catch (Exception ex) when (ex is MsalUiRequiredException || ex is MsalServiceException)
                 {
-                    authRes.Error = ex.Message;
+                    msalNetAuthResult.Error = ex.Message;
                 }
             }
             catch (Exception ex)
             {
-                authRes.Error = ex.Message;
+                msalNetAuthResult.Error = ex.Message;
             }
 
-            return authRes;
+            return msalNetAuthResult;
         }
     }
 }

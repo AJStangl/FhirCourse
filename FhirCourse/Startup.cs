@@ -11,7 +11,7 @@ namespace FhirCourse
 {
     public class Startup
     {
-        private IConfiguration _configuration;
+        private readonly IConfiguration _configuration;
         public Startup(IConfiguration config)
         {
             _configuration = config;
@@ -22,6 +22,7 @@ namespace FhirCourse
             services
                 .AddMvc()
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
+            services.Configure<AzureAd>(_configuration.GetSection("AzureAd"));
             services.AddSingleton<IFhirServices, FhirServices>();
             services.AddTransient<IClient, Client>();
             services.AddTransient<IMsalAuthenticator, MsalAuthenticationHandler>();
@@ -29,10 +30,6 @@ namespace FhirCourse
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
             app.UseMvc();
         }
     }

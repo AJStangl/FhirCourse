@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using FhirCourse.Extensions;
 using FhirCourse.Services;
 using FhirCourse.Services.FhirServices;
@@ -53,12 +54,14 @@ namespace FhirCourse.Controllers
             Bundle bundle = _fhirServices.CreateTransaction();
             return bundle.ToXml();
         }
+
         [HttpGet]
         [Route("[Action]")]
-        public ActionResult<string> GetPsPatient()
+        public async Task<ActionResult<string>> GetPsPatient()
         {
-            _client.GetPatient();
-            return "it worked";
+            FhirClient fhirClient = await _client.ConfigureClient();
+            Resource patient = await fhirClient.GetAsync("/Patient");
+            return patient.ToJson();
         }
     }
 }
