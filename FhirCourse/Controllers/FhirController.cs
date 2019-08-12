@@ -14,14 +14,12 @@ namespace FhirCourse.Controllers
     public class FhirController : ControllerBase
     {
         private readonly IFhirServices _fhirServices;
-        private readonly IFhirClient _fhirClient;
         private readonly IClient _client;
 
         public FhirController(IFhirServices fhirServices, IClient client)
         {
             _fhirServices = fhirServices;
             _client = client;
-            _fhirClient =  new FhirClient("http://fhir.hl7fundamentals.org/r4/");
         }
 
         [HttpGet]
@@ -35,22 +33,23 @@ namespace FhirCourse.Controllers
         [HttpGet, Route("[Action]")]
         public ActionResult<string> GetPatient()
         {
-            var patient = _fhirClient.Get("Patient/50672");
-            return Ok(patient.ToJson());
+            FhirClient fhirClient = _client.ConfigureBasicClient("http://fhir.hl7fundamentals.org/r4/");
+            Resource patientResource = fhirClient.Get("Patient/50672");
+            return Ok(patientResource.ToJson());
         }
 
         [HttpGet, Route("[Action]")]
         public ActionResult<string> UpdatePatient()
         {
-            var patient = _fhirClient.Update(_fhirServices.CreatePatient());
-            return Ok(patient.ToJson());
+            FhirClient fhirClient = _client.ConfigureBasicClient("http://fhir.hl7fundamentals.org/r4/");
+            Resource patientResource = fhirClient.Update(_fhirServices.CreatePatient());
+            return Ok(patientResource.ToJson());
         }
 
         [HttpGet]
         [Route("[Action]")]
         public ActionResult<string> MakeTransaction([FromHeader] int minutes = 0)
         {
-            FhirDateTime fhirDateTime = new FhirDateTime(DateTimeOffset.Now.AddMinutes(minutes));
             Bundle bundle = _fhirServices.CreateTransaction();
             return bundle.ToXml();
         }
@@ -60,8 +59,17 @@ namespace FhirCourse.Controllers
         public async Task<ActionResult<string>> GetPsPatient()
         {
             FhirClient fhirClient = await _client.ConfigureClient();
-            Resource patient = await fhirClient.GetAsync("/Patient");
-            return patient.ToJson();
+            try
+            {
+                Resource patient = await fhirClient.GetAsync("/Patient");
+                return patient.ToJson();
+            }
+            catch (Exception exception)
+            {
+                return OperationOutcome.ForException(exception,
+                    OperationOutcome.IssueType.Processing,
+                    OperationOutcome.IssueSeverity.Fatal).ToJson();
+            }
         }
     }
 }

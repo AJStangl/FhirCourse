@@ -6,7 +6,6 @@ namespace FhirCourse.Services.FhirServices
 {
     public class FhirServices : IFhirServices
     {
-//        private const string PatientId = "50671";
         private const string PatientId = "Alfred.Stangl";
         private const string PatientName = "Alfred";
 
@@ -77,8 +76,8 @@ namespace FhirCourse.Services.FhirServices
 
         public Bundle CreateTransaction()
         {
-            Bundle bundle = new Bundle();
-            bundle.Type = Bundle.BundleType.Transaction;
+            Bundle bundle = new Bundle {Type = Bundle.BundleType.Transaction};
+
             // Add Organization Resource
             bundle.Entry.Add(new Bundle.EntryComponent
             {

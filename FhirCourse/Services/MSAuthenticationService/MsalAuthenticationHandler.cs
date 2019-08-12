@@ -29,24 +29,26 @@ namespace FhirCourse.Services.MSAuthenticationService
             try
             {
                 msalNetAuthResult.Auth = await _confidentialClientApplication
-                    .AcquireTokenSilent(_azureAd.Scopes, accounts.FirstOrDefault())
+                    .AcquireTokenSilent(_azureAd.Scopes, accounts?.FirstOrDefault())
                     .ExecuteAsync();
             }
             catch (MsalUiRequiredException)
             {
                 try
                 {
-                    msalNetAuthResult.Auth = await _confidentialClientApplication.AcquireTokenForClient(_azureAd.Scopes)
+                    msalNetAuthResult.Auth = await _confidentialClientApplication
+                        .AcquireTokenForClient(_azureAd.Scopes)
                         .ExecuteAsync();
                 }
-                catch (Exception ex) when (ex is MsalUiRequiredException || ex is MsalServiceException)
+                catch (Exception exception) when (exception is MsalUiRequiredException ||
+                                                  exception is MsalServiceException)
                 {
-                    msalNetAuthResult.Error = ex.Message;
+                    msalNetAuthResult.Error = exception.Message;
                 }
             }
-            catch (Exception ex)
+            catch (Exception exception)
             {
-                msalNetAuthResult.Error = ex.Message;
+                msalNetAuthResult.Error = exception.Message;
             }
 
             return msalNetAuthResult;

@@ -9,6 +9,7 @@ namespace FhirCourse.Services
     public interface IClient
     {
         Task<FhirClient> ConfigureClient();
+        FhirClient ConfigureBasicClient(string endpoint);
     }
 
     public class Client : IClient
@@ -37,6 +38,20 @@ namespace FhirCourse.Services
                 e.RawRequest.Headers.Add(HttpRequestHeader.Authorization, $"Bearer {authResult.Auth.AccessToken}");
             };
 
+            return fhirClient;
+        }
+
+        public FhirClient ConfigureBasicClient(string endpoint)
+        {
+            FhirClient fhirClient = new FhirClient(endpoint)
+            {
+                PreferredFormat = ResourceFormat.Json,
+                UseFormatParam = true
+            };
+            fhirClient.OnBeforeRequest += delegate(object sender, BeforeRequestEventArgs e)
+            {
+                e.RawRequest.Headers.Add(HttpRequestHeader.Accept, "*/*");
+            };
             return fhirClient;
         }
     }
