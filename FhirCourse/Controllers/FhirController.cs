@@ -54,6 +54,7 @@ namespace FhirCourse.Controllers
             return bundle.ToXml();
         }
 
+
         [HttpGet]
         [Route("[Action]")]
         public async Task<ActionResult<string>> GetPsPatient()
@@ -70,6 +71,13 @@ namespace FhirCourse.Controllers
                     OperationOutcome.IssueType.Processing,
                     OperationOutcome.IssueSeverity.Fatal).ToJson();
             }
+        }
+
+        [HttpGet]
+        [Route("[Action]")]
+        public ActionResult<string> GetBerk()
+        {
+            return Ok(_fhirServices.BerzerkistanPatient().ToXml());
         }
     }
 }

@@ -9,16 +9,26 @@ namespace FhirCourse.Services.MSAuthenticationService
 {
     public class MsalAuthenticationHandler : IMsalAuthenticator
     {
+        private const string DummyString = "DummyString";
+        private static readonly string DummyGuid = Guid.Empty.ToString();
         private readonly IConfidentialClientApplication _confidentialClientApplication;
         private readonly AzureAd _azureAd;
 
         public MsalAuthenticationHandler(IOptions<AzureAd> azureAd)
         {
-            _azureAd = azureAd.Value;
-            _confidentialClientApplication = ConfidentialClientApplicationBuilder.Create(_azureAd.ClientId)
-                .WithClientSecret(_azureAd.ClientSecret)
-                .WithAuthority(AzureCloudInstance.AzurePublic, _azureAd.TenantId)
-                .Build();
+            _azureAd = azureAd?.Value;
+            try
+            {
+                _confidentialClientApplication = ConfidentialClientApplicationBuilder
+                    .Create(_azureAd?.ClientId ?? DummyString)
+                    .WithClientSecret(_azureAd?.ClientSecret ?? DummyString)
+                    .WithAuthority(AzureCloudInstance.AzurePublic, _azureAd?.TenantId ?? DummyGuid)
+                    .Build();
+            }
+            catch (Exception exception)
+            {
+                _confidentialClientApplication = null;
+            }
         }
 
         public async Task<MsalNetAuthResult> GetTokenAsync()

@@ -12,6 +12,6 @@ namespace FhirCourse.Services.MSAuthenticationService
         public string FhirServerEndpoint { get; set; }
         public string AzureFhirScopes { get; set; }
 
-        public string[] Scopes => AzureFhirScopes.Split(",");
+        public string[] Scopes => AzureFhirScopes?.Split(",");
     }
 }
