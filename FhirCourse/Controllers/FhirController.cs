@@ -71,5 +71,12 @@ namespace FhirCourse.Controllers
                     OperationOutcome.IssueSeverity.Fatal).ToJson();
             }
         }
+
+        [HttpGet]
+        [Route("[Action]")]
+        public ActionResult<string> GetBerk()
+        {
+            return Ok(_fhirServices.BerzerkistanPatient().ToJson());
+        }
     }
 }

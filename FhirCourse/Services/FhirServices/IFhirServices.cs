@@ -6,5 +6,6 @@ namespace FhirCourse.Services.FhirServices
     {
         Patient CreatePatient();
         Bundle CreateTransaction();
+        Patient BerzerkistanPatient();
     }
 }

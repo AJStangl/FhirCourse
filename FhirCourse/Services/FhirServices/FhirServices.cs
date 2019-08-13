@@ -8,8 +8,7 @@ namespace FhirCourse.Services.FhirServices
     {
         private const string PatientId = "Alfred.Stangl";
         private const string PatientName = "Alfred";
-
-        Extensions _extensions = new Extensions();
+        private readonly PatientTaxSituation _patientTaxSituation = new PatientTaxSituation();
         public Patient BerzerkistanPatient()
         {
             Patient berzerkistanPatient = new Patient
@@ -53,8 +52,8 @@ namespace FhirCourse.Services.FhirServices
                 {
                     new Extension
                     {
-                        Url = "",
-                        Value = null
+                        Url = _patientTaxSituation.PatientTaxSituationCodeSystem().Url,
+                        Value =
                     }
                 },
                 // Telephone: A local Berzerkistan telephone
