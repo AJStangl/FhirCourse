@@ -2,13 +2,81 @@ using System;
 using System.Collections.Generic;
 using Hl7.Fhir.Model;
 
-namespace FhirCourse.Services
+namespace FhirCourse.Services.FhirServices
 {
     public class FhirServices : IFhirServices
     {
-//        private const string PatientId = "50671";
         private const string PatientId = "Alfred.Stangl";
         private const string PatientName = "Alfred";
+
+        Extensions _extensions = new Extensions();
+        public Patient BerzerkistanPatient()
+        {
+            Patient berzerkistanPatient = new Patient
+            {
+                // Gender - Element gender is mandatory, and should be extracted from the FHIR vocabulary for gender: Options for value are ‘male’ and ‘female’.
+                GenderElement = new Code<AdministrativeGender>(AdministrativeGender.Male),
+                // BirthDate: Element birthdate is mandatory, birth-date, shall be populated with the patient birthdate in the format ‘yyyy-mm-dd'
+                BirthDateElement = new Date(1988, 03, 06),
+                // Name: Element name is mandatory and shall contain:
+                Name = new List<HumanName>
+                {
+                    new HumanName
+                    {
+                        //  Family: The last name of the patient in the family element
+                        FamilyElement = new FhirString("Taco"),
+                        //  Given: he first name of the patient in the given element.
+                        GivenElement = new List<FhirString>
+                        {
+                            new FhirString("Pablo")
+                        }
+                    }
+                },
+                // Identifier: The resource shall include ONLY TWO mandatory identifier elements
+                Identifier = new List<Identifier>
+                {
+                    // BNI: The first one shall be the BNI identifier (system: www.berzerkistan.gov/bni, value equal to the BNI identifier for the patient)
+                    new Identifier
+                    {
+                        SystemElement = new FhirUri("www.berzerkistan.gov/bni"),
+                        ValueElement = new FhirString("123456")
+                    },
+                    // NHIB: The second one shall be the NHIB identifier (system: www.berzerkistan.gov/nhib, value equal to the NHIB identifier for the patient)
+                    new Identifier
+                    {
+                        SystemElement = new FhirUri("www.berzerkistan.gov/nhib"),
+                        ValueElement = new FhirString("123456")
+                    }
+                },
+                // TODO: PPH Tax: The resource shall include the PPH TaxSituation extension https://simplifier.net/MAIS-SOPORTEAFACTURA/PPHTaxSituation/~xml which is mandatory and shall be coded using the PPH Tax Value Set https://simplifier.net/ui/Publication/Show?projectkey=MAIS-SOPORTEAFACTURA&pubUrlKey=PatientTaxSituation
+                Extension = new List<Extension>
+                {
+                    new Extension
+                    {
+                        Url = "",
+                        Value = null
+                    }
+                },
+                // Telephone: A local Berzerkistan telephone
+                Telecom = new List<ContactPoint>
+                {
+                    new ContactPoint
+                    {
+                        SystemElement = new Code<ContactPoint.ContactPointSystem>(ContactPoint.ContactPointSystem.Phone),
+                        ValueElement = new FhirString("+5411)-000-0000")
+                    }
+                },
+                // Text: The resource text shall include all the precedent information in a text concatenating the title and value for each item in one line. Example: Gender: male
+                Text = new Narrative
+                {
+                    Div = $"<div xmlns=\"http://www.w3.org/1999/xhtml\"> " +
+                          $"Gender: {AdministrativeGender.Male}" +
+                          $"</div>",
+
+                }
+            };
+            return berzerkistanPatient;
+        }
 
         public Patient CreatePatient()
         {
@@ -77,8 +145,8 @@ namespace FhirCourse.Services
 
         public Bundle CreateTransaction()
         {
-            Bundle bundle = new Bundle();
-            bundle.Type = Bundle.BundleType.Transaction;
+            Bundle bundle = new Bundle {Type = Bundle.BundleType.Transaction};
+
             // Add Organization Resource
             bundle.Entry.Add(new Bundle.EntryComponent
             {
